@@ -1,0 +1,17 @@
+<html>
+  <body>
+    <p>Hola!</p>
+
+    <p>Mi nombre es {{.Name}}, tengo {{.Age}} años.</p>
+
+    {{ if ge (len .Hobbies) 1 }}
+    <p>Mis pasatiempos favoritos son:</p>
+
+    <ul>
+      {{ range $index, $hobbie := .Hobbies }}
+      <li>{{ increment $index}}. {{$hobbie}}</li>
+      {{end}}
+    </ul>
+    {{end}}
+  </body>
+</html>
