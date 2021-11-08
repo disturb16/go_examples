@@ -31,11 +31,6 @@ func main() {
 		panic(err)
 	}
 
-	// err = addBook(ctx, db, "The Matrix Comics", 1, time.Now())
-	// if err != nil {
-	// 	panic(err)
-	// }
-
 	err = queryBooks(ctx, db)
 	if err != nil {
 		panic(err)
