@@ -1,0 +1,14 @@
+app:
+  port: 3000
+  debug: true
+Database:
+  host: localhost
+  port: 3306
+  user: root
+  password: 1234
+  name: books
+Email:
+  host: smtp.gmail.com
+  port: 587
+  user: ""
+  password: ""
