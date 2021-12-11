@@ -2,14 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/disturb16/go-examples/dependency-injection/configuration"
 	"github.com/disturb16/go-examples/dependency-injection/database"
 )
 
 func main() {
-	var id int
 	var err error
 	ctx := context.Background()
 
@@ -19,15 +17,9 @@ func main() {
 	}
 
 	// create connection
-	db := database.CreateConnection(ctx, config)
-	defer db.Close()
-
-	// test query
-	err = db.QueryRowContext(ctx, "SELECT id from books").Scan(&id)
+	db, err := database.CreateSqliteConnection(ctx, config)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(id)
-	fmt.Println("All good")
+	defer db.Close()
 }

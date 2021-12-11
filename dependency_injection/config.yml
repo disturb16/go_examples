@@ -6,9 +6,4 @@ Database:
   port: 3306
   user: root
   password: 1234
-  name: books
-Email:
-  host: smtp.gmail.com
-  port: 587
-  user: ""
-  password: ""
+  name: users
