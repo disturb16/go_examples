@@ -1,7 +1,11 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
+
+	"github.com/disturb16/go-examples/dependency-injection/configuration"
 )
 
 type Repository struct {
@@ -16,13 +20,15 @@ create table if not exists users
     LastName TEXT
 )`
 
-func New(db *sql.DB) (*Repository, error) {
+func New(ctx context.Context, config *configuration.Configuration, db *sql.DB) (*Repository, error) {
 
 	// Populate schema
-	_, err := db.Exec(schemaQuery)
+	_, err := db.ExecContext(ctx, schemaQuery)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println(config.DB.Name)
 
 	return &Repository{db}, nil
 }

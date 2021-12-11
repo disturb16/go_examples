@@ -33,12 +33,12 @@ func (r *Repository) GetUsers(ctx context.Context) ([]*User, error) {
 	}
 
 	for rows.Next() {
-		u := &User{}
-		err := rows.Scan(u.ID, u.FirstName, u.LastName)
+		u := User{}
+		err := rows.Scan(&u.ID, &u.FirstName, &u.LastName)
 		if err != nil {
 			return nil, err
 		}
-		users = append(users, u)
+		users = append(users, &u)
 	}
 
 	return users, nil

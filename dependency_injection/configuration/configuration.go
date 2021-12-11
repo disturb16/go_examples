@@ -18,6 +18,8 @@ type Configuration struct {
 	DB Database `yaml:"Database"`
 }
 
+const defaultPath string = "config.yml"
+
 func Load(filename string) (*Configuration, error) {
 	config := &Configuration{}
 
@@ -32,4 +34,8 @@ func Load(filename string) (*Configuration, error) {
 	}
 
 	return config, nil
+}
+
+func New() (*Configuration, error) {
+	return Load(defaultPath)
 }
