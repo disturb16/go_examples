@@ -7,8 +7,15 @@ import (
 )
 
 func (a *API) RegisterRoutes(r *mux.Router) {
+	r.Use(requestIDHandler)
 
-	r.HandleFunc("/books", a.getBooks).Methods(http.MethodGet)
-	r.HandleFunc("/books", a.postBook).Methods(http.MethodPost)
-	r.HandleFunc("/books/{id}", a.getBook).Methods(http.MethodGet)
+	public := r.NewRoute().Subrouter()
+	protected := r.NewRoute().Subrouter()
+
+	protected.Use(authMiddleware)
+
+	public.HandleFunc("/books", a.getBooks).Methods(http.MethodGet)
+	public.HandleFunc("/books/{id}", a.getBook).Methods(http.MethodGet)
+
+	protected.HandleFunc("/books", a.postBook).Methods(http.MethodPost)
 }
