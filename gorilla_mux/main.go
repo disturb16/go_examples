@@ -1,36 +1,35 @@
 package main
 
 import (
-	"context"
-	"fmt"
+	"encoding/json"
+	"log"
+	"net/http"
 
-	"github.com/disturb16/go_example/gorillamux/api"
-	"github.com/disturb16/go_example/gorillamux/dbconnection"
-	"github.com/joho/godotenv"
+	"github.com/disturb16/go_examples/gorilla_mux/api"
+	"github.com/gorilla/mux"
 )
 
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode("{\"message\": \"Hello World\"}")
+}
+
 func main() {
-	ctx := context.Background()
-	var number int
-	var err error
 
-	err = godotenv.Load(".env")
-	if err != nil {
-		panic(err)
+	r := mux.NewRouter()
+
+	// create the api object
+	a := &api.API{}
+
+	// register the routes
+	a.RegisterRoutes(r)
+
+	r.HandleFunc("/", handleIndex).Methods(http.MethodGet)
+
+	srv := &http.Server{
+		Addr:    ":8081",
+		Handler: r,
 	}
 
-	db := dbconnection.New()
-	err = db.QueryRowContext(ctx, "SELECT 1").Scan(&number)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(number)
-
-	srv := api.New()
-	err = srv.ListenAndServe()
-
-	if err != nil {
-		panic(err)
-	}
+	log.Println("Listening...")
+	srv.ListenAndServe()
 }
