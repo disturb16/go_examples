@@ -1,19 +1,20 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
-	"strconv"
 
-	"github.com/gorilla/schema"
 	"github.com/labstack/echo/v4"
 )
 
 type API struct{}
 
 type BooksParams struct {
-	Offset int `schema:"offset"`
-	Limit  int `schema:"limit"`
+	Offset int `query:"offset"`
+	Limit  int `query:"limit"`
+}
+
+type BookIdParams struct {
+	ID int `param:"id"`
 }
 
 type PostBook struct {
@@ -21,14 +22,13 @@ type PostBook struct {
 }
 
 var (
-	books   = []string{"Book 1", "Book 2", "Book 3"}
-	decoder = schema.NewDecoder()
+	books = []string{"Book 1", "Book 2", "Book 3"}
 )
 
 func (a *API) getBooks(c echo.Context) error {
 	params := &BooksParams{}
 
-	err := decoder.Decode(params, c.QueryParams())
+	err := c.Bind(params)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid query params")
 	}
@@ -58,14 +58,14 @@ func (a *API) getBooks(c echo.Context) error {
 
 func (a *API) getBook(c echo.Context) error {
 
-	idParam := c.Param("id")
+	params := &BookIdParams{}
 
-	id, err := strconv.Atoi(idParam)
+	err := c.Bind(params)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid parameters")
 	}
 
-	index := id - 1
+	index := params.ID - 1
 
 	if index < 0 || index > len(books)-1 {
 		return c.JSON(http.StatusBadRequest, "Invalid parameters")
@@ -77,7 +77,7 @@ func (a *API) getBook(c echo.Context) error {
 func (a *API) postBook(c echo.Context) error {
 	book := &PostBook{}
 
-	err := json.NewDecoder(c.Request().Body).Decode(book)
+	err := c.Bind(book)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid parameters")
 	}
