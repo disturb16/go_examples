@@ -55,5 +55,6 @@ func NewPostgresDB(ctx context.Context, config *DBConfig) *sqlx.DB {
 		panic(err)
 	}
 
+	sqlx.BindDriver("postgres", sqlx.DOLLAR)
 	return db
 }
