@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"gotests/api/dto"
 	"gotests/internal/books/models"
 	"log"
@@ -13,7 +14,12 @@ func (a *API) SaveBook(c echo.Context) error {
 	ctx := c.Request().Context()
 	params := dto.SaveBook{}
 
-	if err := c.Bind(&params); err != nil {
+	data := c.Request().Body
+	decoder := json.NewDecoder(data)
+	err := decoder.Decode(&params)
+
+	if err != nil {
+		log.Println("Error in request", err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
@@ -22,7 +28,7 @@ func (a *API) SaveBook(c echo.Context) error {
 		Author: params.Author,
 	}
 
-	err := a.bookService.SaveBook(ctx, b)
+	err = a.bookService.SaveBook(ctx, b)
 	if err != nil {
 		log.Println(err)
 		return err

@@ -1,5 +1,5 @@
 package dto
 
 type AllBooks struct {
-	Limit int8 `json:"limit"`
+	Limit int8 `query:"limit"`
 }
