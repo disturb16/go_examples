@@ -27,7 +27,7 @@ func (s *bookSerive) ListBooks(ctx context.Context) ([]*models.Book, error) {
 
 // Book returns a book by its ID.
 func (s *bookSerive) Book(ctx context.Context, id int64) (*models.Book, error) {
-	if id == 0 {
+	if id <= 0 {
 		return nil, ErrInvaliBookdID
 	}
 
