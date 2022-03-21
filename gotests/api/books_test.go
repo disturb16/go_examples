@@ -18,7 +18,7 @@ var a *API
 
 func TestMain(m *testing.M) {
 
-	service := &books.ServiceMocked{}
+	service := &books.MockBookService{}
 	a = New(service)
 
 	code := m.Run()

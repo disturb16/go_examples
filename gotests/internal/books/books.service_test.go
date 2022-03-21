@@ -10,7 +10,7 @@ var s BookService
 
 func TestMain(m *testing.M) {
 
-	repo := &RepositoryMocked{}
+	repo := &MockDBInteractor{}
 	s = NewService(repo)
 
 	code := m.Run()
