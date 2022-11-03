@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"gitbhub.com/disturb16/simple_cli/expenses"
+	"github.com/disturb16/simple_cli/expenses"
 )
 
 var reader *bufio.Reader = bufio.NewReader(os.Stdin)
