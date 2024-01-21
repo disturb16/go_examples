@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "simple"
+		},
+		{
+			"path": "advanced"
+		},
+		{
+			"path": "msgbroker"
+		}
+	],
+	"settings": {}
+}
