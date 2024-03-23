@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
-	r := api.NewRouter()
-	r.Run(":8080")
+  r := api.NewRouter()
+
+  r.Run(":8080")
 }
