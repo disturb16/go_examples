@@ -5,18 +5,16 @@ import (
 	"net/http"
 )
 
-func getProfile(w http.ResponseWriter, req *http.Request) {
-	profileID := req.PathValue("id")
-	fmt.Fprint(w, "hello there, user", profileID)
-}
+func handleGetUser(w http.ResponseWriter, req *http.Request) {
+	id := req.PathValue("id")
 
-func saveProfile(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(w, "profile saved")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "hello there "+id)
 }
 
 func main() {
 	r := http.NewServeMux()
-	r.HandleFunc("GET /profiles/{id}", getProfile)
-	r.HandleFunc("POST /profiles", saveProfile)
-	http.ListenAndServe(":3000", r)
+	r.HandleFunc("GET /users/{id}", handleGetUser)
+
+	http.ListenAndServe(":8080", r)
 }
