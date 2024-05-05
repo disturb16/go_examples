@@ -3,11 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"net/http"
 	"time"
 
 	"github.com/bradfitz/gomemcache/memcache"
-	"github.com/gin-gonic/gin"
 )
 
 var cache = memcache.New("localhost:11211")
@@ -17,57 +16,54 @@ type Profile struct {
 	Email string
 }
 
-func getProfileFromCache(profileID string) (Profile, bool) {
-	item, err := cache.Get(profileID)
-	if err != nil {
-		log.Println(err)
-		return Profile{}, false
-	}
-
-	var p Profile
-
-	err = json.Unmarshal(item.Value, &p)
-	if err != nil {
-		log.Println(err)
-		return Profile{}, false
-	}
-
-	return p, true
+func logexecutionTime(d time.Time) {
+	fmt.Printf("Execution time: %fs\n", time.Since(d).Seconds())
 }
 
-func saveProfileToCache(key string, p Profile) error {
+func saveProfileToCache(id string, p Profile) error {
 	bb, err := json.Marshal(p)
 	if err != nil {
 		return err
 	}
 
-	err = cache.Set(&memcache.Item{
-		Key:        key,
+	return cache.Set(&memcache.Item{
+		Key:        id,
 		Value:      bb,
-		Expiration: int32(time.Now().Add(time.Hour * 30).Unix()),
+		Expiration: 5,
 	})
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
-func getProfile(c *gin.Context) {
-	defer func(d time.Time) {
-		log.Printf("Execution time: %fs", time.Since(d).Seconds())
-	}(time.Now())
-
-	id := c.Param("profileID")
+func getProfileFromCache(key string) Profile {
 	var p Profile
 
-	p, ok := getProfileFromCache(id)
-	if ok {
-		c.JSON(200, p)
+	item, err := cache.Get(key)
+	if err != nil {
+		fmt.Println(err)
+		return Profile{}
+	}
+
+	err = json.Unmarshal(item.Value, &p)
+	if err != nil {
+		fmt.Println(err)
+		return Profile{}
+	}
+
+	return p
+}
+
+func handleGetProfile(w http.ResponseWriter, req *http.Request) {
+	defer logexecutionTime(time.Now())
+
+	id := req.PathValue("id")
+
+	fmt.Println("getting data from cache")
+	p := getProfileFromCache(id)
+	if p.Email != "" {
+		fmt.Fprintf(w, "%+v", p)
 		return
 	}
 
-	log.Println("getting data from DB")
+	fmt.Println("getting data from DB")
 	time.Sleep(time.Millisecond * 600)
 
 	p = Profile{
@@ -75,12 +71,12 @@ func getProfile(c *gin.Context) {
 		Email: fmt.Sprintf("%s@example.com", id),
 	}
 
-	go saveProfileToCache(id, p)
-	c.JSON(200, p)
+	saveProfileToCache(id, p)
+	fmt.Fprintf(w, "%+v", p)
 }
 
 func main() {
-	r := gin.New()
-	r.GET("/profiles/:profileID", getProfile)
-	r.Run(":8080")
+	r := http.NewServeMux()
+	r.HandleFunc("/users/{id}", handleGetProfile)
+	http.ListenAndServe(":8080", r)
 }
