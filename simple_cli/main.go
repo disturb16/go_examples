@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"gitbhub.com/disturb16/simple_cli/commands"
+	"github.com/disturb16/simple_cli/commands"
 )
 
 func main() {
